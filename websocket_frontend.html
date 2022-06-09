@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="con">连接</button>
+    <button id="send" disabled="true">发送</button><br />
+    从服务端接收的数据<br />
+    <span id="recv" style="color: red"></span>
+
+    <script>
+      var connection = document.querySelector('#con')
+      var send = document.querySelector('#send')
+      var recv = document.querySelector('#recv')
+      let wss = null
+      connection.addEventListener('click', () => {
+        wss = new WebSocket('ws://localhost:9999')
+        // 连接成功
+        wss.onopen = () => {
+          send.disabled = false
+        }
+        // 连接失败
+        wss.onclose = () => {
+          send.disabled = true
+        }
+        // 连接成功
+        wss.onmessage = (msg) => {
+          console.log(msg.data)
+          recv.innerHTML = msg.data
+        }
+      })
+
+      send.addEventListener('click', () => {
+        wss.send(
+          JSON.stringify({
+            action: 'themeChange',
+            socketType: 'themeChange',
+            chartName: '',
+            value: 'qitiz'
+          })
+        )
+      })
+    </script>
+  </body>
+</html>
